@@ -37,6 +37,7 @@ out/
 # IDEs
 .vscode/
 .idea/
+.zed/
 *.swp
 *.swo
 .clangd/
