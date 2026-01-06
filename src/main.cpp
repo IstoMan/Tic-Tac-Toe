@@ -1,11 +1,24 @@
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <array>
+#include <cmath>
 #include <iostream>
 
 const float SIZE     = 900;
 const float LOG_SIZE = 90;
 
+enum Symbols
+{
+	X,
+	O,
+	E
+};
+
 void drawGrid(SDL_Renderer *renderer);
-void placeSymbol(SDL_Texture *symbol, SDL_Renderer *renderer);
+void placeSymbol(int x, int y, SDL_Texture *symbol, SDL_Renderer *renderer);
+
+std::pair<int, int>                   handleInput(float mouseX, float mouseY);
+std::array<std::array<Symbols, 3>, 3> board = {Symbols::E};
 
 int main()
 {
@@ -17,14 +30,21 @@ int main()
 
 	SDL_Window   *window   = SDL_CreateWindow("Tic Tac Toe", SIZE, SIZE, 0);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, nullptr);
-
 	SDL_SetRenderLogicalPresentation(renderer, LOG_SIZE, LOG_SIZE, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
-	SDL_Texture *cross  = IMG_LoadTexture(renderer, "../assets/x.svg");
-	SDL_Texture *circle = IMG_LoadTexture(renderer, "../assets/o.svg");
+	SDL_Texture *cross  = IMG_LoadTexture(renderer, "assets/x.svg");
+	SDL_Texture *circle = IMG_LoadTexture(renderer, "assets/o.svg");
 
 	bool      running = true;
 	SDL_Event event;
+	float     mouseX = 0, mouseY = 0;
+
+	board = {
+	    {
+	        {E, E, E},
+	        {E, X, E},
+	        {E, E, E},
+	    }};
 
 	while (running)
 	{
@@ -41,9 +61,32 @@ int main()
 
 		SDL_SetRenderDrawColor(renderer, 130, 130, 130, 255);
 		SDL_RenderClear(renderer);
+
 		// draw commands
 		drawGrid(renderer);
-		placeSymbol(cross, renderer);
+		std::pair<int, int> indexs = handleInput(mouseX, mouseY);
+		if (indexs.first != -1 || indexs.second != -1)
+		{
+			board[indexs.first][indexs.second] = X;
+		}
+
+		for (size_t i = 0; i < 3; ++i)
+		{
+			for (size_t j = 0; j < 3; ++j)
+			{
+				if (board[i][j] != E)
+				{
+					if (board[i][j] == X)
+					{
+						placeSymbol(i, j, cross, renderer);
+					}
+					else if (board[i][j] == O)
+					{
+						placeSymbol(i, j, circle, renderer);
+					}
+				}
+			}
+		}
 
 		SDL_RenderPresent(renderer);
 	}
@@ -88,12 +131,29 @@ void drawGrid(SDL_Renderer *renderer)
 	}
 }
 
-void placeSymbol(SDL_Texture *symbol, SDL_Renderer *renderer)
+std::pair<int, int> handleInput(float mouseX, float mouseY)
 {
-	float     spriteSize = 10;
+	SDL_MouseButtonFlags mouseButton = SDL_GetMouseState(&mouseX, &mouseY);
+
+	int col = -1, row = -1;
+
+	if (mouseButton == SDL_BUTTON_LEFT)
+	{
+		col = floor(mouseX / (SIZE / 3));
+		row = floor(mouseY / (SIZE / 3));
+	}
+
+	return std::make_pair(col, row);
+}
+
+void placeSymbol(int x, int y, SDL_Texture *symbol, SDL_Renderer *renderer)
+{
+	float spacing = LOG_SIZE / 3;
+
+	float     spriteSize = 30;
 	SDL_FRect dst{
-	    .x = 0,
-	    .y = 0,
+	    .x = spacing * x,
+	    .y = spacing * y,
 	    .w = spriteSize,
 	    .h = spriteSize,
 	};
