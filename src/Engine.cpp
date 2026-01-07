@@ -32,8 +32,7 @@ void Engine::run(IGame &game)
 	}
 }
 
-SDLState::SDLState(float size, float logSize)
-    : window(nullptr), renderer(nullptr), size(size), logSize(logSize)
+SDLState::SDLState(float size, float logSize) : window(nullptr), renderer(nullptr), size(size), logSize(logSize)
 {
 }
 

@@ -10,10 +10,12 @@ enum class Mode
 {
 	Menu,
 	GameOn,
+	GameOff,
 };
 
 class Game : public IGame
 {
+private:
 	std::array<std::array<Symbols, 3>, 3> board;
 
 	float           mouseX, mouseY;
@@ -34,8 +36,11 @@ public:
 
 	void onRender() override;
 	void onUpdate() override;
+
+private:
 	void handleInput();
 	void placeSymbol(int x, int y, GameObject obj);
 	void drawGrid();
 	void drawPieces();
+	void drawMenu();
 };

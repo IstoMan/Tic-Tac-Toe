@@ -2,6 +2,28 @@
 #include "GameObject.h"
 #include <cmath>
 
+void Game::onUpdate()
+{
+	handleInput();
+}
+
+void Game::onRender()
+{
+	switch (gameMode)
+	{
+		case Mode::Menu:
+			drawMenu();
+			break;
+		case Mode::GameOn:
+			drawGrid();
+			drawPieces();
+			break;
+		case Mode::GameOff:
+			// TODO: Implement overlay game over menu
+			break;
+	}
+}
+
 void Game::placeSymbol(int x, int y, GameObject obj)
 {
 	float spacing = state.logSize / 3;
@@ -29,12 +51,6 @@ void Game::handleInput()
 
 		board[col][row] = Symbols::X;
 	}
-}
-
-void Game::onRender()
-{
-	drawGrid();
-	drawPieces();
 }
 
 void Game::drawPieces()
@@ -94,7 +110,8 @@ void Game::drawGrid()
 	}
 }
 
-void Game::onUpdate()
+void Game::drawMenu()
 {
-	handleInput();
+	SDL_SetRenderDrawColor(state.renderer, 130, 130, 130, 255);
+	SDL_RenderClear(state.renderer);
 }
