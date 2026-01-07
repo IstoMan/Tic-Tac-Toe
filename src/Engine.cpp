@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 
 namespace Core
@@ -46,6 +47,13 @@ bool SDLState::Initialize()
 		Cleanup();
 	}
 
+	if (!TTF_Init())
+	{
+		std::cerr << "Failed to init font system " << SDL_GetError() << std::endl;
+		initialized = false;
+		Cleanup();
+	}
+
 	window = SDL_CreateWindow("Tic Tac Toe", size, size, 0);
 	if (!window)
 	{
@@ -70,6 +78,7 @@ void SDLState::Cleanup()
 {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	SDL_Quit();
 }
 

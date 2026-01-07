@@ -14,8 +14,9 @@ struct Resource
 	TTF_Font    *mainFont, *menuFont;
 
 	SDL_Texture *loadTexture(const std::filesystem::path &texturePath, SDL_Renderer *renderer);
-	TTF_Font    *loadFont(const std::filesystem::path &fontPath);
-	void         load(Core::SDLState &state);
+	SDL_Texture *createTextTexture(TTF_Font *font, const std::string &text, SDL_Color color, SDL_Renderer *renderer);
+	TTF_Font    *loadFont(const std::filesystem::path &fontPath, float fontSize);
 
+	Resource(Core::SDLState &state);
 	~Resource();
 };

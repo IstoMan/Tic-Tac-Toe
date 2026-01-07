@@ -1,6 +1,35 @@
 #include "Game.h"
 #include "GameObject.h"
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
+#include <cstddef>
+#include <string>
+
+Game::Game(Core::SDLState &engineState, Resource &resources) : gameMode(Mode::Menu), state(engineState), res(resources), circle(O, res), cross(X, res)
+{
+	for (auto &row : board)
+	{
+		row.fill(Symbols::E);
+	}
+
+	std::string Hello = "Tic Tac Toe";
+	SDL_Color   red{
+	      .r = 73,
+	      .g = 69,
+	      .b = 218,
+	      .a = 255,
+    };
+	menuTextTexture = res.createTextTexture(res.mainFont, Hello, red, state.renderer);
+}
+
+Game::~Game()
+{
+}
 
 void Game::onUpdate()
 {
@@ -114,4 +143,16 @@ void Game::drawMenu()
 {
 	SDL_SetRenderDrawColor(state.renderer, 130, 130, 130, 255);
 	SDL_RenderClear(state.renderer);
+
+	SDL_FRect dst{
+	    .x = 15,
+	    .y = 15,
+	    .w = 60,
+	    .h = 14,
+	};
+
+	if (menuTextTexture)
+	{
+		SDL_RenderTexture(state.renderer, menuTextTexture, NULL, &dst);
+	}
 }

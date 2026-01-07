@@ -4,6 +4,7 @@
 #include "IGame.h"
 #include "Resource.h"
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <array>
 
 enum class Mode
@@ -26,13 +27,8 @@ private:
 	GameObject      cross;
 
 public:
-	Game(Core::SDLState &engineState, Resource &resources) : gameMode(Mode::Menu), state(engineState), res(resources), circle(O, res), cross(X, res)
-	{
-		for (auto &row : board)
-		{
-			row.fill(Symbols::E);
-		}
-	}
+	Game(Core::SDLState &engineState, Resource &resources);
+	~Game();
 
 	void onRender() override;
 	void onUpdate() override;
@@ -43,4 +39,6 @@ private:
 	void drawGrid();
 	void drawPieces();
 	void drawMenu();
+
+	SDL_Texture *menuTextTexture{nullptr};
 };
