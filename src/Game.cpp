@@ -1,22 +1,10 @@
 #include "Game.h"
 #include "Engine.h"
 #include "GameObject.h"
-#include <SDL3/SDL_blendmode.h>
-#include <SDL3/SDL_error.h>
 #include <SDL3/SDL_mouse.h>
-#include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_rect.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_stdinc.h>
-#include <SDL3/SDL_surface.h>
-#include <SDL3/SDL_video.h>
-#include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
 
-float logSize = Engine::Get().GetLogSize();
-float size    = Engine::Get().GetLogSize();
-
-Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::NIL), res(resources), circle(O, res), cross(X, res)
+Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), circle(O, res), cross(X, res)
 {
 	for (auto &row : board)
 	{
@@ -52,7 +40,7 @@ void Game::onRender()
 
 void Game::placeSymbol(int x, int y, GameObject obj)
 {
-	float spacing = logSize / 3;
+	float spacing = Engine::Get().GetLogSize() / 3;
 
 	float     spriteSize = 30;
 	SDL_FRect dst{
@@ -61,12 +49,14 @@ void Game::placeSymbol(int x, int y, GameObject obj)
 	    .w = spriteSize,
 	    .h = spriteSize,
 	};
-	SDL_RenderTexture(renderer, obj.tex, NULL, &dst);
+	SDL_RenderTexture(Engine::Get().GetRenderer(), obj.tex, NULL, &dst);
 }
 
 void Game::handleInput()
 {
-	SDL_MouseButtonFlags mouseButton = SDL_GetMouse&mouseX, &mouseY);
+	SDL_MouseButtonFlags mouseButton = SDL_GetMouseState(&mouseX, &mouseY);
+	float                col         = floor(mouseX / (Engine::Get().GetSize() / 3));
+	float                row         = floor(mouseY / (Engine::Get().GetSize() / 3));
 
 	switch (gameMode)
 	{
@@ -82,23 +72,14 @@ void Game::handleInput()
 		{
 			switch (currentPlayer)
 			{
-				case Player::NIL:
+				case Player::P1:
 				{
-					currentPlayer = Player::P1;
+					board[col][row] = Symbols::X;
 				}
 				break;
-				case Player::P1:
 				case Player::P2:
 				{
-					int col = -1, row = -1;
-
-					if (mouseButton == SDL_BUTTON_LEFT)
-					{
-						col = floor(mouseX / (size / 3));
-						row = floor(mouseY / (size / 3));
-
-						board[col][row] = Symbols::X;
-					}
+					board[col][row] = Symbols::O;
 				}
 				break;
 			}
@@ -134,13 +115,13 @@ void Game::drawPieces()
 
 void Game::drawGrid()
 {
-	float spacing   = logSize / 3;
+	float spacing   = Engine::Get().GetLogSize() / 3;
 	float thickness = 5;
 
 	SDL_FRect xAxis{
 	    .x = 0,
 	    .y = 0,
-	    .w = logSize,
+	    .w = Engine::Get().GetLogSize(),
 	    .h = thickness,
 	};
 
@@ -148,30 +129,30 @@ void Game::drawGrid()
 	    .x = 0,
 	    .y = 0,
 	    .w = thickness,
-	    .h = logSize,
+	    .h = Engine::Get().GetLogSize(),
 	};
 
-	SDL_SetRenderDrawColor(renderer, 130, 130, 130, 255);
-	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(Engine::Get().GetRenderer(), 130, 130, 130, 255);
+	SDL_RenderClear(Engine::Get().GetRenderer());
 
-	SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
+	SDL_SetRenderDrawColor(Engine::Get().GetRenderer(), 180, 180, 180, 255);
 	for (size_t i = 1; i <= 2; i++)
 	{
 		xAxis.y = spacing * i - thickness / 2;
-		SDL_RenderFillRect(renderer, &xAxis);
+		SDL_RenderFillRect(Engine::Get().GetRenderer(), &xAxis);
 	}
 
 	for (size_t j = 1; j <= 2; j++)
 	{
 		yAxis.x = spacing * j - thickness / 2;
-		SDL_RenderFillRect(renderer, &yAxis);
+		SDL_RenderFillRect(Engine::Get().GetRenderer(), &yAxis);
 	}
 }
 
 void Game::drawMenu()
 {
-	SDL_RenderClear(renderer);
-	SDL_RenderTexture(renderer, res.background, NULL, NULL);
+	SDL_RenderClear(Engine::Get().GetRenderer());
+	SDL_RenderTexture(Engine::Get().GetRenderer(), res.background, NULL, NULL);
 	SDL_FRect dst{
 	    .x = 15,
 	    .y = 15,
@@ -179,5 +160,5 @@ void Game::drawMenu()
 	    .h = 14,
 	};
 
-	SDL_RenderTexture(renderer, res.menuTextTexture, NULL, &dst);
+	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuTextTexture, NULL, &dst);
 }

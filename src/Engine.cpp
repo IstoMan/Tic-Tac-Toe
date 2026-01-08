@@ -1,6 +1,10 @@
 #include "Engine.h"
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
+#include <SDL3/SDL_timer.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cassert>
+#include <cstdint>
 #include <iostream>
 
 static Engine *s_Engine = nullptr;
@@ -37,6 +41,7 @@ bool Engine::Initialize()
 		initialized = false;
 		Cleanup();
 	}
+	SDL_SetRenderVSync(m_Renderer, 1);
 
 	SDL_SetRenderLogicalPresentation(m_Renderer, m_LogSize, m_LogSize, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
 
@@ -44,10 +49,8 @@ bool Engine::Initialize()
 	return initialized;
 }
 
-void Engine::Run(IGame &game)
+void Engine::Run(App &game)
 {
-	SDL_Event event;
-
 	while (isRunning)
 	{
 		while (SDL_PollEvent(&event))

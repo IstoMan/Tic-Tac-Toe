@@ -12,8 +12,8 @@ int main()
 		return 1;
 	}
 
-	Resource res(engine.GetState());
-	Game     game(engine.GetState(), res);
+	Resource res;
+	Game     game(res);
 
 	engine.Run(game);
 
