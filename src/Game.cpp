@@ -16,47 +16,9 @@ Game::~Game()
 {
 }
 
-void Game::onEvent(SDL_Event &event)
+void Game::onUpdate()
 {
-	if (event.type == SDL_EVENT_MOUSE_BUTTON_UP && event.button.button == SDL_BUTTON_LEFT)
-	{
-		switch (gameMode)
-		{
-			case Mode::Menu:
-			{
-				gameMode = Mode::GameOn;
-			}
-			break;
-			case Mode::GameOn:
-			{
-				mouseX = event.button.x;
-				mouseY = event.button.y;
-
-				float col = floor(mouseX / (Engine::Get().GetSize() / 3));
-				float row = floor(mouseY / (Engine::Get().GetSize() / 3));
-
-				switch (currentPlayer)
-				{
-					case Player::P1:
-					{
-						board[col][row] = Symbols::X;
-					}
-					break;
-					case Player::P2:
-					{
-						board[col][row] = Symbols::O;
-					}
-					break;
-				}
-			}
-			break;
-			case Mode::GameOff:
-			{
-				// TODO: Create a end screen
-			}
-			break;
-		}
-	}
+	handleInput();
 }
 
 void Game::onRender()
@@ -88,6 +50,46 @@ void Game::placeSymbol(int x, int y, GameObject obj)
 	    .h = spriteSize,
 	};
 	SDL_RenderTexture(Engine::Get().GetRenderer(), obj.tex, NULL, &dst);
+}
+
+void Game::handleInput()
+{
+	SDL_MouseButtonFlags mouseButton = SDL_GetMouseState(&mouseX, &mouseY);
+	float                col         = floor(mouseX / (Engine::Get().GetSize() / 3));
+	float                row         = floor(mouseY / (Engine::Get().GetSize() / 3));
+
+	switch (gameMode)
+	{
+		case Mode::Menu:
+		{
+			if (mouseButton == SDL_BUTTON_LEFT)
+			{
+				gameMode = Mode::GameOn;
+			}
+		}
+		break;
+		case Mode::GameOn:
+		{
+			switch (currentPlayer)
+			{
+				case Player::P1:
+				{
+					board[col][row] = Symbols::X;
+				}
+				break;
+				case Player::P2:
+				{
+					board[col][row] = Symbols::O;
+				}
+				break;
+			}
+		}
+		case Mode::GameOff:
+		{
+			// TODO: Create an end screens
+		}
+		break;
+	}
 }
 
 void Game::drawPieces()
