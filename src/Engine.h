@@ -6,38 +6,23 @@
 namespace Core
 {
 
-struct SDLState
-{
-public:
-	SDL_Window   *window;
-	SDL_Renderer *renderer;
-	float         size;
-	float         logSize;
-
-public:
-	bool Initialize();
-	SDLState(float size, float logSize);
-	~SDLState();
-
-private:
-	void Cleanup();
-};
-
 class Engine
 {
 private:
-	SDLState  state;
+	SDL_Window   *m_Window;
+	SDL_Renderer *m_Renderer;
+	float         m_Size    = 700;
+	float         m_LogSize = 90;
+
 	SDL_Event event;
 	bool      isRunning = true;
 
+private:
+	void Cleanup();
+
 public:
-	Engine(float size, float logSize) : state(size, logSize)
-	{}
-	SDLState &GetState()
-	{
-		return state;
-	}
 	bool Initialize();
+	~Engine();
 	void run(IGame &game);
 };
 }        // namespace Core
