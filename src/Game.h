@@ -22,7 +22,6 @@ class Game : public App
 private:
 	std::array<std::array<Symbols, 3>, 3> board;
 
-	float      mouseX, mouseY;
 	Mode       gameMode;
 	Player     currentPlayer;
 	Resource  &res;
@@ -33,8 +32,9 @@ public:
 	Game(Resource &resources);
 	~Game();
 
-	void onRender() override;
-	void onUpdate() override;
+	void  onRender() override;
+	void  onEvent(SDL_Event &event) override;
+	float mouseX, mouseY;
 
 private:
 	void handleInput();
