@@ -1,9 +1,10 @@
 #include "Engine.h"
 #include <SDL3_ttf/SDL_ttf.h>
+#include <cassert>
 #include <iostream>
 
-namespace Core
-{
+static Engine *s_Engine = nullptr;
+
 bool Engine::Initialize()
 {
 	bool initialized = true;
@@ -38,10 +39,12 @@ bool Engine::Initialize()
 	}
 
 	SDL_SetRenderLogicalPresentation(m_Renderer, m_LogSize, m_LogSize, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
+
+	s_Engine = this;
 	return initialized;
 }
 
-void Engine::run(IGame &game)
+void Engine::Run(IGame &game)
 {
 	SDL_Event event;
 
@@ -77,4 +80,24 @@ Engine::~Engine()
 {
 	Cleanup();
 }
-}        // namespace Core
+
+SDL_Renderer *Engine::GetRenderer()
+{
+	return m_Renderer;
+}
+
+Engine &Engine::Get()
+{
+	assert(s_Engine);
+	return *s_Engine;
+}
+
+float Engine::GetLogSize()
+{
+	return m_LogSize;
+}
+
+float Engine::GetSize()
+{
+	return m_Size;
+}

@@ -2,9 +2,7 @@
 #include "IGame.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
-
-namespace Core
-{
+#include <SDL3/SDL_render.h>
 
 class Engine
 {
@@ -23,6 +21,9 @@ private:
 public:
 	bool Initialize();
 	~Engine();
-	void run(IGame &game);
+	void           Run(IGame &game);
+	float          GetLogSize();
+	float          GetSize();
+	SDL_Renderer  *GetRenderer();
+	static Engine &Get();
 };
-}        // namespace Core

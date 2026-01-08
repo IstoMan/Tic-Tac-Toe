@@ -5,7 +5,7 @@
 
 int main()
 {
-	Core::Engine engine(900, 90);
+	Engine engine;
 	if (!engine.Initialize())
 	{
 		std::cerr << "Failed to initialize engine." << std::endl;
@@ -15,7 +15,7 @@ int main()
 	Resource res(engine.GetState());
 	Game     game(engine.GetState(), res);
 
-	engine.run(game);
+	engine.Run(game);
 
 	return 0;
 }

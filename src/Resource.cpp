@@ -1,4 +1,5 @@
 #include "Resource.h"
+#include "Engine.h"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
@@ -6,10 +7,10 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cassert>
 #include <filesystem>
-#include <iostream>
 
-SDL_Texture *Resource::loadTexture(const std::filesystem::path &texturePath,
-                                   SDL_Renderer                *renderer)
+SDL_Renderer *renderer = Engine::Get().GetRenderer();
+
+SDL_Texture *Resource::loadTexture(const std::filesystem::path &texturePath)
 {
 	SDL_Texture *tex = IMG_LoadTexture(renderer, texturePath.c_str());
 	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
@@ -19,7 +20,7 @@ SDL_Texture *Resource::loadTexture(const std::filesystem::path &texturePath,
 	return tex;
 }
 
-SDL_Texture *Resource::createTextTexture(TTF_Font *font, const std::string &text, SDL_Color color, SDL_Renderer *renderer)
+SDL_Texture *Resource::createTextTexture(TTF_Font *font, const std::string &text, SDL_Color color)
 {
 	// SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), text.length(), color);
 	SDL_Surface *surface = TTF_RenderText_Blended(font, text.c_str(), text.length(), color);
@@ -45,15 +46,15 @@ TTF_Font *Resource::loadFont(const std::filesystem::path &fontPath, float fontSi
 	return font;
 }
 
-Resource::Resource(Core::SDLState &state)
+Resource::Resource()
 {
 	mainFont = loadFont(std::filesystem::path("assets/fonts/PlanetJumbo.ttf"), 80);
 	menuFont = loadFont(std::filesystem::path("assets/fonts/Inter-Variable.ttf"), 18);
 
-	menuTextTexture = createTextTexture(mainFont, "Tic Tac Toe", {213, 166, 42, 255}, state.renderer);
-	cross           = loadTexture(std::filesystem::path("assets/x.svg"), state.renderer);
-	circle          = loadTexture(std::filesystem::path("assets/o.svg"), state.renderer);
-	background      = loadTexture(std::filesystem::path("assets/background.jpg"), state.renderer);
+	menuTextTexture = createTextTexture(mainFont, "Tic Tac Toe", {213, 166, 42, 255});
+	cross           = loadTexture(std::filesystem::path("assets/x.svg"));
+	circle          = loadTexture(std::filesystem::path("assets/o.svg"));
+	background      = loadTexture(std::filesystem::path("assets/background.jpg"));
 
 	Uint8 opactiy = 100;
 	SDL_SetTextureAlphaMod(background, opactiy);

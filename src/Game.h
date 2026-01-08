@@ -1,5 +1,4 @@
 #pragma once
-#include "Engine.h"
 #include "GameObject.h"
 #include "IGame.h"
 #include "Resource.h"
@@ -25,16 +24,15 @@ class Game : public IGame
 private:
 	std::array<std::array<Symbols, 3>, 3> board;
 
-	float           mouseX, mouseY;
-	Mode            gameMode;
-	Player          currentPlayer;
-	Core::SDLState &state;
-	Resource       &res;
-	GameObject      circle;
-	GameObject      cross;
+	float      mouseX, mouseY;
+	Mode       gameMode;
+	Player     currentPlayer;
+	Resource  &res;
+	GameObject circle;
+	GameObject cross;
 
 public:
-	Game(Core::SDLState &engineState, Resource &resources);
+	Game(Resource &resources);
 	~Game();
 
 	void onRender() override;
