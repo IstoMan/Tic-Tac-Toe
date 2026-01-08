@@ -12,7 +12,7 @@ Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1
 
 void Game::onUpdate()
 {
-	checkWin();
+	Symbols win = checkWin();
 }
 
 void Game::onEvent(SDL_Event &event)
@@ -111,6 +111,8 @@ void Game::drawPieces()
 				case Symbols::O:
 					placeSymbol(i, j, circle);
 					break;
+				case Symbols::NIL:
+					break;
 			}
 		}
 	}
@@ -190,6 +192,23 @@ Symbols Game::checkWin()
 	if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
 	{
 		return board[1][1];
+	}
+
+	bool isEmpty = true;
+	for (size_t i = 0; i < 3; ++i)
+	{
+		for (size_t j = 0; j < 3; ++j)
+		{
+			if (board[i][j] == Symbols::O && board[i][j] == Symbols::X)
+			{
+				isEmpty = false;
+			}
+		}
+	}
+
+	if (!isEmpty)
+	{
+		return Symbols::NIL;
 	}
 
 	return Symbols::NIL;

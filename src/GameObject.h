@@ -24,6 +24,8 @@ struct GameObject
 			case Symbols::O:
 				tex = res.circle;
 				break;
+			case Symbols::NIL:
+				break;
 		}
 	}
 };
