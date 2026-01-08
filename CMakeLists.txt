@@ -12,8 +12,8 @@ find_package(SDL3_ttf REQUIRED)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "src/*.hpp" "src/*.h")
 
-add_executable(prog ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-target_compile_options(prog PRIVATE -Wall -Wextra -Wpedantic -g)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -g)
 
-target_link_libraries(prog SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(${PROJECT_NAME} SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)

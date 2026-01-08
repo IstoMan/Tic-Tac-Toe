@@ -1,13 +1,12 @@
 #pragma once
 #include "Resource.h"
 #include <SDL3/SDL_render.h>
-#include <iostream>
 
-enum Symbols
+enum class Symbols
 {
 	X,
 	O,
-	E
+	NIL,
 };
 
 struct GameObject
@@ -19,14 +18,11 @@ struct GameObject
 	{
 		switch (sym)
 		{
-			case X:
+			case Symbols::X:
 				tex = res.cross;
 				break;
-			case O:
+			case Symbols::O:
 				tex = res.circle;
-				break;
-			case E:
-				std::cout << "Moron passed an empty symbol" << "\n";
 				break;
 		}
 	}

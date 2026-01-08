@@ -30,16 +30,17 @@ private:
 
 public:
 	Game(Resource &resources);
-	~Game();
 
 	void  onRender() override;
+	void  onUpdate() override;
 	void  onEvent(SDL_Event &event) override;
 	float mouseX, mouseY;
 
 private:
-	void handleInput();
-	void placeSymbol(int x, int y, GameObject obj);
-	void drawGrid();
-	void drawPieces();
-	void drawMenu();
+	void    handleInput();
+	void    placeSymbol(int x, int y, GameObject obj);
+	void    drawGrid();
+	void    drawPieces();
+	void    drawMenu();
+	Symbols checkWin();
 };

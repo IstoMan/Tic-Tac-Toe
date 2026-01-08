@@ -68,6 +68,7 @@ void Engine::Run(App &game)
 		}
 
 		game.onRender();
+		game.onUpdate();
 
 		SDL_RenderPresent(m_Renderer);
 	}

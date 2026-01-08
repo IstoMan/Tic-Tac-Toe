@@ -3,17 +3,16 @@
 #include "GameObject.h"
 #include <SDL3/SDL_mouse.h>
 #include <cmath>
+#include <cstddef>
+#include <print>
 
-Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), circle(O, res), cross(X, res)
+Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), circle(Symbols::O, res), cross(Symbols::X, res)
 {
-	for (auto &row : board)
-	{
-		row.fill(Symbols::E);
-	}
 }
 
-Game::~Game()
+void Game::onUpdate()
 {
+	checkWin();
 }
 
 void Game::onEvent(SDL_Event &event)
@@ -39,12 +38,20 @@ void Game::onEvent(SDL_Event &event)
 				{
 					case Player::P1:
 					{
-						board[col][row] = Symbols::X;
+						if (board[col][row] != Symbols::X && board[col][row] != Symbols::O)
+						{
+							board[col][row] = Symbols::X;
+							currentPlayer   = Player::P2;
+						}
 					}
 					break;
 					case Player::P2:
 					{
-						board[col][row] = Symbols::O;
+						if (board[col][row] != Symbols::X && board[col][row] != Symbols::O)
+						{
+							board[col][row] = Symbols::O;
+							currentPlayer   = Player::P1;
+						}
 					}
 					break;
 				}
@@ -98,13 +105,11 @@ void Game::drawPieces()
 		{
 			switch (board[i][j])
 			{
-				case X:
+				case Symbols::X:
 					placeSymbol(i, j, cross);
 					break;
-				case O:
+				case Symbols::O:
 					placeSymbol(i, j, circle);
-					break;
-				case E:
 					break;
 			}
 		}
@@ -159,4 +164,33 @@ void Game::drawMenu()
 	};
 
 	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuTextTexture, NULL, &dst);
+}
+
+Symbols Game::checkWin()
+{
+	// vertical
+	for (size_t i = 0; i < 3; ++i)
+	{
+		if (board[i][0] == board[i][1] && board[i][1] == board[i][2])
+		{
+			return board[i][0];
+		}
+		if (board[0][i] == board[1][i] && board[1][i] == board[2][i])
+		{
+			return board[0][i];
+		}
+	}
+
+	// horizontal
+	if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
+	{
+		return board[1][1];
+	}
+
+	if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
+	{
+		return board[1][1];
+	}
+
+	return Symbols::NIL;
 }
