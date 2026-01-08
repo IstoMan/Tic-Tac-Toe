@@ -13,6 +13,12 @@ enum class Mode
 	GameOn,
 	GameOff,
 };
+enum class Player
+{
+	NIL,
+	P1,
+	P2
+};
 
 class Game : public IGame
 {
@@ -21,6 +27,7 @@ private:
 
 	float           mouseX, mouseY;
 	Mode            gameMode;
+	Player          currentPlayer;
 	Core::SDLState &state;
 	Resource       &res;
 	GameObject      circle;
@@ -39,6 +46,4 @@ private:
 	void drawGrid();
 	void drawPieces();
 	void drawMenu();
-
-	SDL_Texture *menuTextTexture{nullptr};
 };

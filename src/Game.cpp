@@ -1,30 +1,23 @@
 #include "Game.h"
 #include "GameObject.h"
+#include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cmath>
-#include <cstddef>
-#include <string>
 
-Game::Game(Core::SDLState &engineState, Resource &resources) : gameMode(Mode::Menu), state(engineState), res(resources), circle(O, res), cross(X, res)
+Game::Game(Core::SDLState &engineState, Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::NIL), state(engineState), res(resources), circle(O, res), cross(X, res)
 {
 	for (auto &row : board)
 	{
 		row.fill(Symbols::E);
 	}
-
-	std::string Hello = "Tic Tac Toe";
-	SDL_Color   red{
-	      .r = 73,
-	      .g = 69,
-	      .b = 218,
-	      .a = 255,
-    };
-	menuTextTexture = res.createTextTexture(res.mainFont, Hello, red, state.renderer);
 }
 
 Game::~Game()
@@ -71,14 +64,46 @@ void Game::handleInput()
 {
 	SDL_MouseButtonFlags mouseButton = SDL_GetMouseState(&mouseX, &mouseY);
 
-	int col = -1, row = -1;
-
-	if (mouseButton == SDL_BUTTON_LEFT)
+	switch (gameMode)
 	{
-		col = floor(mouseX / (state.size / 3));
-		row = floor(mouseY / (state.size / 3));
+		case Mode::Menu:
+		{
+			if (mouseButton == SDL_BUTTON_LEFT)
+			{
+				gameMode = Mode::GameOn;
+			}
+		}
+		break;
+		case Mode::GameOn:
+		{
+			switch (currentPlayer)
+			{
+				case Player::NIL:
+				{
+					currentPlayer = Player::P1;
+				}
+				break;
+				case Player::P1:
+				case Player::P2:
+				{
+					int col = -1, row = -1;
 
-		board[col][row] = Symbols::X;
+					if (mouseButton == SDL_BUTTON_LEFT)
+					{
+						col = floor(mouseX / (state.size / 3));
+						row = floor(mouseY / (state.size / 3));
+
+						board[col][row] = Symbols::X;
+					}
+				}
+				break;
+			}
+		}
+		case Mode::GameOff:
+		{
+			// TODO: Create an end screens
+		}
+		break;
 	}
 }
 
@@ -141,9 +166,8 @@ void Game::drawGrid()
 
 void Game::drawMenu()
 {
-	SDL_SetRenderDrawColor(state.renderer, 130, 130, 130, 255);
 	SDL_RenderClear(state.renderer);
-
+	SDL_RenderTexture(state.renderer, res.background, NULL, NULL);
 	SDL_FRect dst{
 	    .x = 15,
 	    .y = 15,
@@ -151,8 +175,5 @@ void Game::drawMenu()
 	    .h = 14,
 	};
 
-	if (menuTextTexture)
-	{
-		SDL_RenderTexture(state.renderer, menuTextTexture, NULL, &dst);
-	}
+	SDL_RenderTexture(state.renderer, res.menuTextTexture, NULL, &dst);
 }
