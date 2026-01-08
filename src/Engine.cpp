@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
@@ -61,11 +62,12 @@ void Engine::Run(App &game)
 				{
 					isRunning = false;
 				}
+				break;
 			}
+			game.onEvent(event);
 		}
 
 		game.onRender();
-		game.onUpdate();
 
 		SDL_RenderPresent(m_Renderer);
 	}
