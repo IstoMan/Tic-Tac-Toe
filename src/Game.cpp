@@ -1,13 +1,8 @@
 #include "Game.h"
 #include "Engine.h"
 #include "GameObject.h"
-#include <SDL3/SDL_mouse.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_system.h>
 #include <array>
 #include <cmath>
-#include <cstddef>
-#include <print>
 
 Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), winner(Winner::None), circle(Symbols::O, res), cross(Symbols::X, res)
 {
@@ -37,7 +32,6 @@ void Game::onUpdate()
 
 		if (winner != Winner::None)
 		{
-			std::println("Winner is {}", (int) winner);
 			gameMode = Mode::GameOff;
 		}
 	}
