@@ -2,13 +2,14 @@
 #include "Engine.h"
 #include "GameObject.h"
 #include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_render.h>
 #include <SDL3/SDL_system.h>
 #include <array>
 #include <cmath>
 #include <cstddef>
 #include <print>
 
-Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), circle(Symbols::O, res), cross(Symbols::X, res)
+Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), winner(Winner::None), circle(Symbols::O, res), cross(Symbols::X, res)
 {
 	for (std::array<Symbols, 3> &row : board)
 	{
@@ -16,30 +17,28 @@ Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1
 	}
 }
 
+void Game::resetGame()
+{
+	currentPlayer = Player::P1;
+
+	for (std::array<Symbols, 3> &row : board)
+	{
+		row.fill(Symbols::NIL);
+	}
+
+	winner = Winner::None;
+}
+
 void Game::onUpdate()
 {
 	if (gameMode == Mode::GameOn)
 	{
-		Winner win = checkWin();
-		switch (win)
+		winner = checkWin();
+
+		if (winner != Winner::None)
 		{
-			case Winner::P1:
-			{
-				std::println("P1 Won");
-			}
-			break;
-			case Winner::P2:
-			{
-				std::println("P2 Won");
-			}
-			break;
-			case Winner::Draw:
-			{
-				std::println("It's a Draw");
-			}
-			break;
-			default:
-				break;
+			std::println("Winner is {}", (int) winner);
+			gameMode = Mode::GameOff;
 		}
 	}
 }
@@ -53,6 +52,13 @@ void Game::onEvent(SDL_Event &event)
 			case Mode::Menu:
 			{
 				gameMode = Mode::GameOn;
+			}
+			break;
+			case Mode::GameOff:
+			{
+				// TODO: Create a end screen
+				gameMode = Mode::GameOn;
+				resetGame();
 			}
 			break;
 			case Mode::GameOn:
@@ -86,11 +92,6 @@ void Game::onEvent(SDL_Event &event)
 				}
 			}
 			break;
-			case Mode::GameOff:
-			{
-				// TODO: Create a end screen
-			}
-			break;
 		}
 	}
 }
@@ -107,7 +108,9 @@ void Game::onRender()
 			drawPieces();
 			break;
 		case Mode::GameOff:
-			// TODO: Implement overlay game over menu
+			drawGrid();
+			drawPieces();
+			drawEndScreen();
 			break;
 	}
 }
@@ -183,18 +186,70 @@ void Game::drawGrid()
 	}
 }
 
+void Game::drawEndScreen()
+{
+	SDL_SetRenderDrawBlendMode(Engine::Get().GetRenderer(), SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(Engine::Get().GetRenderer(), 0, 0, 0, 200);
+
+	SDL_RenderFillRect(Engine::Get().GetRenderer(), NULL);
+	SDL_FRect titleDst{
+	    .x = 15,
+	    .y = 15,
+	    .w = 60,
+	    .h = 14,
+	};
+	SDL_FRect menuDst{
+	    .x = 30,
+	    .y = 75,
+	    .w = 35.85,
+	    .h = 7.17,
+	};
+	switch (winner)
+	{
+		case Winner::P1:
+		{
+			SDL_RenderTexture(Engine::Get().GetRenderer(), res.p1Text, NULL, &titleDst);
+		}
+		break;
+		case Winner::P2:
+		{
+			SDL_RenderTexture(Engine::Get().GetRenderer(), res.p2Text, NULL, &titleDst);
+		}
+		break;
+		case Winner::Draw:
+		{
+			SDL_RenderTexture(Engine::Get().GetRenderer(), res.drawText, NULL, &titleDst);
+		}
+		break;
+		default:
+			break;
+	}
+
+	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuText, NULL, &menuDst);
+}
+
 void Game::drawMenu()
 {
 	SDL_RenderClear(Engine::Get().GetRenderer());
 	SDL_RenderTexture(Engine::Get().GetRenderer(), res.background, NULL, NULL);
-	SDL_FRect dst{
+
+	SDL_FRect titleDst{
 	    .x = 15,
 	    .y = 15,
 	    .w = 60,
 	    .h = 14,
 	};
 
-	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuTextTexture, NULL, &dst);
+	SDL_FRect menuDst{
+	    .x = 27,
+	    .y = 75,
+	    .w = 35.85,
+	    .h = 7.17,
+	};
+
+	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuText, NULL, &menuDst);
+
+	SDL_RenderTexture(Engine::Get().GetRenderer(), res.titleText, NULL, &titleDst);
 }
 
 Winner Game::checkWin()

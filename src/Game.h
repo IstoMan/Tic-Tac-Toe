@@ -51,5 +51,7 @@ private:
 	void   drawGrid();
 	void   drawPieces();
 	void   drawMenu();
+	void   drawEndScreen();
+	void   resetGame();
 	Winner checkWin();
 };

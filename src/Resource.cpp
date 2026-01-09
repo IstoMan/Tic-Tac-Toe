@@ -42,9 +42,13 @@ TTF_Font *Resource::loadFont(const std::filesystem::path &fontPath, float fontSi
 Resource::Resource()
 {
 	mainFont = loadFont(std::filesystem::path("assets/fonts/PlanetJumbo.ttf"), 80);
-	menuFont = loadFont(std::filesystem::path("assets/fonts/Inter-Variable.ttf"), 18);
+	menuFont = loadFont(std::filesystem::path("assets/fonts/Inter-Variable.ttf"), 80);
 
 	titleText  = createTextTexture(mainFont, "Tic Tac Toe", {213, 166, 42, 255});
+	menuText   = createTextTexture(menuFont, "Click to Start", {44, 164, 178, 255});
+	drawText   = createTextTexture(mainFont, "It's a Draw", {213, 166, 42, 255});
+	p1Text     = createTextTexture(mainFont, "P1 Won!!", {213, 166, 42, 255});
+	p2Text     = createTextTexture(mainFont, "P2 Won!!", {213, 166, 42, 255});
 	cross      = loadTexture(std::filesystem::path("assets/x.svg"));
 	circle     = loadTexture(std::filesystem::path("assets/o.svg"));
 	background = loadTexture(std::filesystem::path("assets/background.jpg"));
