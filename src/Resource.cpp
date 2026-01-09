@@ -44,10 +44,10 @@ Resource::Resource()
 	mainFont = loadFont(std::filesystem::path("assets/fonts/PlanetJumbo.ttf"), 80);
 	menuFont = loadFont(std::filesystem::path("assets/fonts/Inter-Variable.ttf"), 18);
 
-	menuTextTexture = createTextTexture(mainFont, "Tic Tac Toe", {213, 166, 42, 255});
-	cross           = loadTexture(std::filesystem::path("assets/x.svg"));
-	circle          = loadTexture(std::filesystem::path("assets/o.svg"));
-	background      = loadTexture(std::filesystem::path("assets/background.jpg"));
+	titleText  = createTextTexture(mainFont, "Tic Tac Toe", {213, 166, 42, 255});
+	cross      = loadTexture(std::filesystem::path("assets/x.svg"));
+	circle     = loadTexture(std::filesystem::path("assets/o.svg"));
+	background = loadTexture(std::filesystem::path("assets/background.jpg"));
 
 	Uint8 opactiy = 100;
 	SDL_SetTextureAlphaMod(background, opactiy);

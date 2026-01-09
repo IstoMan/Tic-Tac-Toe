@@ -10,7 +10,7 @@ struct Resource
 	std::vector<SDL_Texture *> textures;
 	std::vector<TTF_Font *>    fonts;
 
-	SDL_Texture *cross, *circle, *background, *menuTextTexture;
+	SDL_Texture *cross, *circle, *background, *titleText, *drawText, *p1Text, *p2Text, *menuText;
 	TTF_Font    *mainFont, *menuFont;
 
 	SDL_Texture *loadTexture(const std::filesystem::path &texturePath);

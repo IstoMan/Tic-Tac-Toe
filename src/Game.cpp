@@ -2,17 +2,46 @@
 #include "Engine.h"
 #include "GameObject.h"
 #include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_system.h>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <print>
 
 Game::Game(Resource &resources) : gameMode(Mode::Menu), currentPlayer(Player::P1), res(resources), circle(Symbols::O, res), cross(Symbols::X, res)
 {
+	for (std::array<Symbols, 3> &row : board)
+	{
+		row.fill(Symbols::NIL);
+	}
 }
 
 void Game::onUpdate()
 {
-	Symbols win = checkWin();
+	if (gameMode == Mode::GameOn)
+	{
+		Winner win = checkWin();
+		switch (win)
+		{
+			case Winner::P1:
+			{
+				std::println("P1 Won");
+			}
+			break;
+			case Winner::P2:
+			{
+				std::println("P2 Won");
+			}
+			break;
+			case Winner::Draw:
+			{
+				std::println("It's a Draw");
+			}
+			break;
+			default:
+				break;
+		}
+	}
 }
 
 void Game::onEvent(SDL_Event &event)
@@ -168,48 +197,64 @@ void Game::drawMenu()
 	SDL_RenderTexture(Engine::Get().GetRenderer(), res.menuTextTexture, NULL, &dst);
 }
 
-Symbols Game::checkWin()
+Winner Game::checkWin()
 {
-	// vertical
+	Symbols winner = Symbols::NIL;
+	// lines
 	for (size_t i = 0; i < 3; ++i)
 	{
-		if (board[i][0] == board[i][1] && board[i][1] == board[i][2])
+		if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][1] != Symbols::NIL)
 		{
-			return board[i][0];
+			winner = board[i][1];
 		}
-		if (board[0][i] == board[1][i] && board[1][i] == board[2][i])
+		if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[1][i] != Symbols::NIL)
 		{
-			return board[0][i];
+			winner = board[1][i];
 		}
 	}
 
-	// horizontal
-	if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
+	// diagonals
+	if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[1][1] != Symbols::NIL)
 	{
-		return board[1][1];
+		winner = board[1][1];
 	}
 
-	if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
+	if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[1][1] != Symbols::NIL)
 	{
-		return board[1][1];
+		winner = board[1][1];
 	}
 
-	bool isEmpty = true;
+	bool Empty = false;
 	for (size_t i = 0; i < 3; ++i)
 	{
 		for (size_t j = 0; j < 3; ++j)
 		{
-			if (board[i][j] == Symbols::O && board[i][j] == Symbols::X)
+			if (board[i][j] == Symbols::NIL)
 			{
-				isEmpty = false;
+				Empty = true;
 			}
 		}
 	}
 
-	if (!isEmpty)
+	switch (winner)
 	{
-		return Symbols::NIL;
+		case Symbols::X:
+			return Winner::P1;
+			break;
+		case Symbols::O:
+			return Winner::P2;
+			break;
+		case Symbols::NIL:
+			if (Empty)
+			{
+				return Winner::None;
+			}
+			else
+			{
+				return Winner::Draw;
+			}
+			break;
 	}
 
-	return Symbols::NIL;
+	return Winner::None;
 }

@@ -17,6 +17,14 @@ enum class Player
 	P2
 };
 
+enum class Winner
+{
+	None,
+	Draw,
+	P1,
+	P2
+};
+
 class Game : public App
 {
 private:
@@ -25,6 +33,7 @@ private:
 	Mode       gameMode;
 	Player     currentPlayer;
 	Resource  &res;
+	Winner     winner;
 	GameObject circle;
 	GameObject cross;
 
@@ -37,10 +46,10 @@ public:
 	float mouseX, mouseY;
 
 private:
-	void    handleInput();
-	void    placeSymbol(int x, int y, GameObject obj);
-	void    drawGrid();
-	void    drawPieces();
-	void    drawMenu();
-	Symbols checkWin();
+	void   handleInput();
+	void   placeSymbol(int x, int y, GameObject obj);
+	void   drawGrid();
+	void   drawPieces();
+	void   drawMenu();
+	Winner checkWin();
 };
