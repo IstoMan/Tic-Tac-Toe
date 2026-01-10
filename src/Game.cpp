@@ -50,7 +50,6 @@ void Game::onEvent(SDL_Event &event)
 			break;
 			case Mode::GameOff:
 			{
-				// TODO: Create a end screen
 				gameMode = Mode::GameOn;
 				resetGame();
 			}
